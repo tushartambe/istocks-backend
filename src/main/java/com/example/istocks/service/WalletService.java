@@ -14,11 +14,23 @@ public class WalletService {
     @Autowired
     private WalletsRepository walletsRepository;
 
-    public Wallet initiateWalletWithAmount(BigDecimal initialAmount, String email) {
+    public Wallet createWalletForUser(String email) {
         Wallet wallet = new Wallet();
         wallet.setEmail(email);
-        wallet.setBalance(initialAmount);
+        wallet.setBalance(BigDecimal.valueOf(0));
 
+        return walletsRepository.save(wallet);
+    }
+
+    public Wallet debitAmount(BigDecimal amount, String email) {
+        Wallet wallet = walletsRepository.findByEmail(email);
+        wallet.setBalance(wallet.getBalance().subtract(amount));
+        return walletsRepository.save(wallet);
+    }
+
+    public Wallet creditAmount(BigDecimal amount, String email) {
+        Wallet wallet = walletsRepository.findByEmail(email);
+        wallet.setBalance(wallet.getBalance().add(amount));
         return walletsRepository.save(wallet);
     }
 

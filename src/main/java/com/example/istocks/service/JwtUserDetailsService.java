@@ -11,24 +11,23 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 
 @Service
 public class JwtUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private IStocksUserRepository IStocksUserRepository;
+    private IStocksUserRepository iStocksUserRepository;
 
     @Autowired
-    private WalletService walletService;
+    private TransactionService transactionService;
 
     @Autowired
     private PasswordEncoder bcryptEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        IStocksUser user = IStocksUserRepository.findByEmail(username);
+        IStocksUser user = iStocksUserRepository.findByEmail(username);
 
         if (user == null) {
             throw new UsernameNotFoundException("No user found for: " + username);
@@ -42,10 +41,9 @@ public class JwtUserDetailsService implements UserDetailsService {
         newUser.setName(userDto.getName());
         newUser.setPassword(bcryptEncoder.encode(userDto.getPassword()));
 
-        walletService.initiateWalletWithAmount(BigDecimal.valueOf(20000), userDto.getEmail());
-
-        return IStocksUserRepository.save(newUser);
+        IStocksUser savedUser = iStocksUserRepository.save(newUser);
+        transactionService.createInitialTransaction(savedUser.getEmail());
+        return savedUser;
     }
-
 
 }
