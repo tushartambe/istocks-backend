@@ -33,17 +33,27 @@ public class FavoritesService {
                 JsonNode quote = nseService.getQuote(stock.getSymbol());
                 Map<String, Object> result = objectMapper.convertValue(quote, new TypeReference<Map<String, Object>>() {
                 });
-                Map<String,Object> data =(Map<String,Object>) ((ArrayList<Object>) result.get("data")).get(0);
+                Map<String, Object> data = (Map<String, Object>) ((ArrayList<Object>) result.get("data")).get(0);
                 return StockDto.from(stock, data);
             }).collect(Collectors.toList());
     }
 
-    public FavoriteStock addToFavorite(FavoriteStockDto favoriteStockDto, String email) {
+    public FavoriteStock addToFavorites(FavoriteStockDto favoriteStockDto, String email) {
         FavoriteStock favoriteStock = new FavoriteStock();
         favoriteStock.setEmail(email);
         favoriteStock.setSymbol(favoriteStockDto.getSymbol());
         favoriteStock.setName(favoriteStockDto.getName());
 
         return favoritesRepository.save(favoriteStock);
+    }
+
+    public void removeFromFavorites(FavoriteStockDto favoriteStockDto, String email) {
+        List<FavoriteStock> byEmailAndSymbol = favoritesRepository.findByEmailAndSymbol(email, favoriteStockDto.getSymbol());
+        favoritesRepository.deleteAll(byEmailAndSymbol);
+    }
+
+    public boolean isFavorite(String symbol, String email) {
+            List<FavoriteStock> byEmailAndSymbol = favoritesRepository.findByEmailAndSymbol(email, symbol);
+        return !byEmailAndSymbol.isEmpty();
     }
 }

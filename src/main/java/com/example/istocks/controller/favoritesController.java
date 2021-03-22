@@ -6,6 +6,7 @@ import com.example.istocks.model.FavoriteStock;
 import com.example.istocks.repository.FavoritesRepository;
 import com.example.istocks.service.FavoritesService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -28,8 +29,21 @@ public class favoritesController {
     }
 
     @PostMapping("/add")
-    public FavoriteStock addToFavorite(Authentication authentication, @RequestBody FavoriteStockDto favoriteStockDto) {
+    public FavoriteStock addToFavorites(Authentication authentication, @RequestBody FavoriteStockDto favoriteStockDto) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return favoritesService.addToFavorite(favoriteStockDto, userDetails.getUsername());
+        return favoritesService.addToFavorites(favoriteStockDto, userDetails.getUsername());
+    }
+
+    @PostMapping("/remove")
+    public ResponseEntity<?> removeFromFavorites(Authentication authentication, @RequestBody FavoriteStockDto favoriteStockDto) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        favoritesService.removeFromFavorites(favoriteStockDto, userDetails.getUsername());
+        return ResponseEntity.ok(true);
+    }
+
+    @GetMapping("/isFavorite")
+    public boolean isFavorite(Authentication authentication, @RequestParam String symbol) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        return favoritesService.isFavorite(symbol, userDetails.getUsername());
     }
 }

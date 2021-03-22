@@ -12,4 +12,6 @@ public interface FavoritesRepository extends CrudRepository<FavoriteStock, Strin
 
     public List<FavoriteStock> findByEmail(String email);
 
+    public List<FavoriteStock> findByEmailAndSymbol(String email, String symbol);
+
 }
