@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 @Service
@@ -18,6 +19,9 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     @Autowired
     private IStocksUserRepository IStocksUserRepository;
+
+    @Autowired
+    private WalletService walletService;
 
     @Autowired
     private PasswordEncoder bcryptEncoder;
@@ -37,6 +41,8 @@ public class JwtUserDetailsService implements UserDetailsService {
         newUser.setEmail(userDto.getEmail());
         newUser.setName(userDto.getName());
         newUser.setPassword(bcryptEncoder.encode(userDto.getPassword()));
+
+        walletService.initiateWalletWithAmount(BigDecimal.valueOf(20000), userDto.getEmail());
 
         return IStocksUserRepository.save(newUser);
     }
