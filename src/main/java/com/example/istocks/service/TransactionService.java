@@ -40,9 +40,9 @@ public class TransactionService {
         Transaction savedTransaction = transactionsRepository.save(transaction);
         TransactionType transactionType = savedTransaction.getTransactionType();
         if (transactionType.equals(TransactionType.CREDIT)) {
-            walletService.debitAmount(savedTransaction.getAmount(), email);
-        } else {
             walletService.creditAmount(savedTransaction.getAmount(), email);
+        } else {
+            walletService.debitAmount(savedTransaction.getAmount(), email);
         }
         return savedTransaction;
     }
