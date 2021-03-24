@@ -1,5 +1,6 @@
 package com.example.istocks.controller;
 
+import com.example.istocks.dto.StockDto;
 import com.example.istocks.service.NseService;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ public class NseController {
     }
 
     @GetMapping("/get_quote_info")
-    public JsonNode getQuote(@RequestParam String companyName) {
+    public StockDto getQuote(@RequestParam String companyName) {
         return nseService.getQuote(companyName);
     }
 

@@ -20,10 +20,10 @@ public class StockDto {
     private String high52;
     private Map<String, Object> additionalDetails;
 
-    public static StockDto from(FavoriteStock favoriteStock, Map<String, Object> details) {
+    public static StockDto from(Map<String, Object> details) {
         StockDto favoriteStockDto = new StockDto();
-        favoriteStockDto.setName(favoriteStock.getName());
-        favoriteStockDto.setSymbol(favoriteStock.getSymbol());
+        favoriteStockDto.setName(details.get("companyName").toString());
+        favoriteStockDto.setSymbol(details.get("symbol").toString());
         favoriteStockDto.setLastPrice(details.get("lastPrice").toString());
         favoriteStockDto.setOpen(details.get("open").toString());
         favoriteStockDto.setPreviousClose(details.get("previousClose").toString());

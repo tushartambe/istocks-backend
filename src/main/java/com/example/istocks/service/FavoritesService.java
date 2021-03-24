@@ -29,13 +29,7 @@ public class FavoritesService {
     public List<StockDto> getFavorites(String email) {
         return favoritesRepository.findByEmail(email)
             .stream()
-            .map(stock -> {
-                JsonNode quote = nseService.getQuote(stock.getSymbol());
-                Map<String, Object> result = objectMapper.convertValue(quote, new TypeReference<Map<String, Object>>() {
-                });
-                Map<String, Object> data = (Map<String, Object>) ((ArrayList<Object>) result.get("data")).get(0);
-                return StockDto.from(stock, data);
-            }).collect(Collectors.toList());
+            .map(stock -> nseService.getQuote(stock.getSymbol())).collect(Collectors.toList());
     }
 
     public FavoriteStock addToFavorites(FavoriteStockDto favoriteStockDto, String email) {
@@ -53,7 +47,7 @@ public class FavoritesService {
     }
 
     public boolean isFavorite(String symbol, String email) {
-            List<FavoriteStock> byEmailAndSymbol = favoritesRepository.findByEmailAndSymbol(email, symbol);
+        List<FavoriteStock> byEmailAndSymbol = favoritesRepository.findByEmailAndSymbol(email, symbol);
         return !byEmailAndSymbol.isEmpty();
     }
 }
