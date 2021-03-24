@@ -23,25 +23,27 @@ public class OrderService {
     public Order createOrder(OrderRequestDto orderRequestDto, String email) {
         TransactionType transactionType = orderRequestDto.getOrderType().equals(OrderType.BUY) ? TransactionType.DEBIT : TransactionType.CREDIT;
 
-        Transaction transaction = new Transaction();
-        transaction.setEmail(email);
-        transaction.setAmount(orderRequestDto.getAmount());
-        transaction.setTransactionType(transactionType);
-        transaction.setDescription(createDescription(orderRequestDto));
-        transaction.setDate(new Date());
+        Transaction transaction = Transaction.builder()
+            .email(email)
+            .amount(orderRequestDto.getAmount())
+            .transactionType(transactionType)
+            .description(createDescription(orderRequestDto))
+            .date(new Date())
+            .build();
 
         Transaction savedTransaction = transactionService.addTransaction(transaction, email);
 
-        Order order = new Order();
-        order.setEmail(email);
-        order.setTransactionId(savedTransaction.getId());
-        order.setAmount(savedTransaction.getAmount());
-        order.setDate(savedTransaction.getDate());
-        order.setOrderType(orderRequestDto.getOrderType());
-        order.setCompanySymbol(orderRequestDto.getCompanySymbol());
-        order.setCompanyName(orderRequestDto.getCompanyName());
-        order.setCurrentSharePrice(orderRequestDto.getCurrentSharePrice());
-        order.setShareQuantity(orderRequestDto.getShareQuantity());
+        Order order = Order.builder()
+            .email(email)
+            .transactionId(savedTransaction.getId())
+            .amount(savedTransaction.getAmount())
+            .date(savedTransaction.getDate())
+            .orderType(orderRequestDto.getOrderType())
+            .companySymbol(orderRequestDto.getCompanySymbol())
+            .companyName(orderRequestDto.getCompanyName())
+            .currentSharePrice(orderRequestDto.getCurrentSharePrice())
+            .shareQuantity(orderRequestDto.getShareQuantity())
+            .build();
 
         return ordersRepository.save(order);
     }

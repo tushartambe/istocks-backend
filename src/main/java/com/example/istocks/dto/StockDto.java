@@ -1,13 +1,14 @@
 package com.example.istocks.dto;
 
-import com.example.istocks.model.FavoriteStock;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Map;
 
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class StockDto {
     private String symbol;
     private String name;
@@ -21,17 +22,17 @@ public class StockDto {
     private Map<String, Object> additionalDetails;
 
     public static StockDto from(Map<String, Object> details) {
-        StockDto favoriteStockDto = new StockDto();
-        favoriteStockDto.setName(details.get("companyName").toString());
-        favoriteStockDto.setSymbol(details.get("symbol").toString());
-        favoriteStockDto.setLastPrice(details.get("lastPrice").toString());
-        favoriteStockDto.setOpen(details.get("open").toString());
-        favoriteStockDto.setPreviousClose(details.get("previousClose").toString());
-        favoriteStockDto.setDayLow(details.get("dayLow").toString());
-        favoriteStockDto.setDayHigh(details.get("dayHigh").toString());
-        favoriteStockDto.setLow52(details.get("low52").toString());
-        favoriteStockDto.setHigh52(details.get("high52").toString());
-//        favoriteStockDto.setAdditionalDetails(details);
-        return favoriteStockDto;
+        return StockDto.builder()
+            .name(details.get("companyName").toString())
+            .symbol(details.get("symbol").toString())
+            .lastPrice(details.get("lastPrice").toString())
+            .open(details.get("open").toString())
+            .previousClose(details.get("previousClose").toString())
+            .dayLow(details.get("dayLow").toString())
+            .dayHigh(details.get("dayHigh").toString())
+            .low52(details.get("low52").toString())
+            .high52(details.get("high52").toString())
+//            .additionalDetails(details)
+            .build();
     }
 }

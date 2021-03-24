@@ -32,14 +32,16 @@ public class JwtUserDetailsService implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("No user found for: " + username);
         }
+
         return new User(user.getEmail(), user.getPassword(), new ArrayList<>());
     }
 
     public IStocksUser save(UserDto userDto) {
-        IStocksUser newUser = new IStocksUser();
-        newUser.setEmail(userDto.getEmail());
-        newUser.setName(userDto.getName());
-        newUser.setPassword(bcryptEncoder.encode(userDto.getPassword()));
+        IStocksUser newUser = IStocksUser.builder()
+            .email(userDto.getEmail())
+            .name(userDto.getName())
+            .password(bcryptEncoder.encode(userDto.getPassword()))
+            .build();
 
         IStocksUser savedUser = iStocksUserRepository.save(newUser);
         transactionService.createInitialTransaction(savedUser.getEmail());

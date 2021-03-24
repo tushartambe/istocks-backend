@@ -1,14 +1,14 @@
 package com.example.istocks.dto;
 
-import com.example.istocks.model.FavoriteStock;
-import com.fasterxml.jackson.databind.JsonNode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.Map;
-
-@Getter
-@Setter
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class FavoriteStockDto {
     private String symbol;
     private String name;

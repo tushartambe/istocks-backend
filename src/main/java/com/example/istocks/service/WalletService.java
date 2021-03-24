@@ -15,9 +15,10 @@ public class WalletService {
     private WalletsRepository walletsRepository;
 
     public Wallet createWalletForUser(String email) {
-        Wallet wallet = new Wallet();
-        wallet.setEmail(email);
-        wallet.setBalance(BigDecimal.valueOf(0));
+        Wallet wallet = Wallet.builder()
+            .email(email)
+            .balance(BigDecimal.ZERO)
+            .build();
 
         return walletsRepository.save(wallet);
     }
@@ -37,9 +38,9 @@ public class WalletService {
     public WalletBalanceDto getBalance(String email) {
         Wallet wallet = walletsRepository.findByEmail(email);
 
-        WalletBalanceDto walletBalanceDto = new WalletBalanceDto();
-        walletBalanceDto.setBalance(wallet.getBalance());
-        return walletBalanceDto;
+        return WalletBalanceDto.builder()
+            .balance(wallet.getBalance())
+            .build();
     }
 
 }

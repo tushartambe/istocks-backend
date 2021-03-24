@@ -22,17 +22,15 @@ public class TransactionService {
 
     public Transaction createInitialTransaction(String email) {
         Wallet wallet = walletService.createWalletForUser(email);
-
-        Transaction initialTransaction = new Transaction();
-        initialTransaction.setEmail(email);
-        initialTransaction.setAmount(BigDecimal.valueOf(20000));
-        initialTransaction.setTransactionType(TransactionType.CREDIT);
-        initialTransaction.setDescription("Initial amount Credited.");
-        initialTransaction.setDate(new Date());
+        Transaction initialTransaction = Transaction.builder()
+            .email(email)
+            .amount(BigDecimal.valueOf(20000))
+            .transactionType(TransactionType.CREDIT)
+            .description("Initial amount Credited.")
+            .date(new Date())
+            .build();
         Transaction savedTransaction = transactionsRepository.save(initialTransaction);
-
         walletService.creditAmount(savedTransaction.getAmount(), email);
-
         return savedTransaction;
     }
 
