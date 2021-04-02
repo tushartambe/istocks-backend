@@ -1,6 +1,7 @@
 package com.example.istocks.service;
 
 import com.example.istocks.dto.HoldingDto;
+import com.example.istocks.dto.StockDto;
 import com.example.istocks.model.Holding;
 import com.example.istocks.model.Order;
 import com.example.istocks.repository.HoldingRepository;
@@ -19,11 +20,18 @@ public class HoldingsService {
     @Autowired
     private HoldingRepository holdingsRepository;
 
+    @Autowired
+    private NseService nseService;
+
     public List<HoldingDto> getHoldings(String email) {
         List<Holding> holdings = holdingsRepository.findByEmail(email);
         return holdings.stream()
-            .map(HoldingDto::from)
-            .filter(holdingDto -> holdingDto.getTotalQuantity() > 0) //TODO : Logic for deleting holding if shares become 0
+            .filter(h -> h.getTotalQuantity() > 0) //TODO : Logic for deleting holding if shares become 0
+            .map(holding -> {
+                StockDto quote = nseService.getQuote(holding.getSymbol());
+                return HoldingDto.from(holding, quote);
+            })
+//            .filter(holdingDto -> holdingDto.getTotalQuantity() > 0)
             .collect(Collectors.toList());
     }
 
@@ -46,11 +54,11 @@ public class HoldingsService {
             return addNewHolding(email, order);
         } else {
             int newQuantity = holding.getTotalQuantity() + order.getShareQuantity();
-            BigDecimal updatedAmount = holding.getTotalPrice().add(order.getAmount());
+            BigDecimal updatedAmount = holding.getTotalInvestedAmount().add(order.getAmount());
             BigDecimal averagePrice = updatedAmount.divide(BigDecimal.valueOf(newQuantity));
 
             holding.setTotalQuantity(newQuantity);
-            holding.setTotalPrice(updatedAmount);
+            holding.setTotalInvestedAmount(updatedAmount);
             holding.setAveragePrice(averagePrice);
             return holdingsRepository.save(holding);
         }
@@ -63,7 +71,7 @@ public class HoldingsService {
         BigDecimal updatedAmount = holding.getAveragePrice().multiply(BigDecimal.valueOf(newQuantity));
 
         holding.setTotalQuantity(newQuantity);
-        holding.setTotalPrice(updatedAmount);
+        holding.setTotalInvestedAmount(updatedAmount);
 
         return holdingsRepository.save(holding);
     }
@@ -75,7 +83,7 @@ public class HoldingsService {
             .name(order.getCompanyName())
             .averagePrice(order.getCurrentSharePrice())
             .totalQuantity(order.getShareQuantity())
-            .totalPrice(order.getAmount())
+            .totalInvestedAmount(order.getAmount())
             .build();
 
         return holdingsRepository.save(holding);

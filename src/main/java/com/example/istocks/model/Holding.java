@@ -22,5 +22,5 @@ public class Holding {
     private String name;
     private int totalQuantity;
     private BigDecimal averagePrice;
-    private BigDecimal totalPrice;
+    private BigDecimal totalInvestedAmount;
 }
