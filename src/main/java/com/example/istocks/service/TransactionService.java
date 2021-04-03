@@ -44,15 +44,7 @@ public class TransactionService {
 
                 Order order = ordersRepository.findByTransactionId(transaction.getId());
                 if (!Objects.isNull(order)) {
-                    OrderResponseDto orderResponseDto = OrderResponseDto.builder()
-                        .orderId(order.getId())
-                        .companyName(order.getCompanyName())
-                        .companySymbol(order.getCompanySymbol())
-                        .amount(order.getAmount())
-                        .currentSharePrice(order.getCurrentSharePrice())
-                        .orderType(order.getOrderType())
-                        .shareQuantity(order.getShareQuantity())
-                        .build();
+                    OrderResponseDto orderResponseDto = OrderResponseDto.from(order);
                     transactionDto.setOrderResponse(orderResponseDto);
                 }
 

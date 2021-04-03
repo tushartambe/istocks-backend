@@ -2,6 +2,7 @@ package com.example.istocks.service;
 
 import com.example.istocks.constants.TransactionType;
 import com.example.istocks.dto.OrderRequestDto;
+import com.example.istocks.dto.OrderResponseDto;
 import com.example.istocks.exception.InSufficientBalanceException;
 import com.example.istocks.exception.StockNotOwnedException;
 import com.example.istocks.model.Holding;
@@ -10,10 +11,13 @@ import com.example.istocks.model.Transaction;
 import com.example.istocks.repository.OrdersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.example.istocks.constants.ExceptionMessages.*;
 import static com.example.istocks.constants.OrderType.*;
@@ -32,6 +36,13 @@ public class OrderService {
 
     @Autowired
     private HoldingsService holdingsService;
+
+    public List<OrderResponseDto> getOrders(String email) {
+        List<Order> orders = ordersRepository.findByEmail(email);
+        return orders.stream()
+            .sorted((t1, t2) -> Long.compare(t2.getDate().getTime(), t1.getDate().getTime()))
+            .map(OrderResponseDto::from).collect(Collectors.toList());
+    }
 
     public Order createOrder(String email, OrderRequestDto orderRequestDto) throws StockNotOwnedException, InSufficientBalanceException {
         TransactionType transactionType = orderRequestDto.getOrderType().equals(BUY) ? TransactionType.DEBIT : TransactionType.CREDIT;
