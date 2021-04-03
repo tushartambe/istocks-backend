@@ -11,4 +11,6 @@ public interface OrdersRepository extends CrudRepository<Order, String> {
 
     public List<Order> findByEmail(String email);
 
+    public Order findByTransactionId(String transactionId);
+
 }

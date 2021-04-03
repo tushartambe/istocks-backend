@@ -31,7 +31,6 @@ public class HoldingsService {
                 StockDto quote = nseService.getQuote(holding.getSymbol());
                 return HoldingDto.from(holding, quote);
             })
-//            .filter(holdingDto -> holdingDto.getTotalQuantity() > 0)
             .collect(Collectors.toList());
     }
 
