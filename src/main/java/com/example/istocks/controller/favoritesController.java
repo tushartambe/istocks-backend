@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 @RestController
@@ -29,13 +30,13 @@ public class favoritesController {
     }
 
     @PostMapping("/add")
-    public FavoriteStock addToFavorites(Authentication authentication, @RequestBody FavoriteStockDto favoriteStockDto) {
+    public FavoriteStock addToFavorites(Authentication authentication, @RequestBody FavoriteStockDto favoriteStockDto) throws UnsupportedEncodingException {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         return favoritesService.addToFavorites(favoriteStockDto, userDetails.getUsername());
     }
 
     @PostMapping("/remove")
-    public ResponseEntity<?> removeFromFavorites(Authentication authentication, @RequestBody FavoriteStockDto favoriteStockDto) {
+    public ResponseEntity<?> removeFromFavorites(Authentication authentication, @RequestBody FavoriteStockDto favoriteStockDto) throws UnsupportedEncodingException {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         favoritesService.removeFromFavorites(favoriteStockDto, userDetails.getUsername());
         return ResponseEntity.ok(true);

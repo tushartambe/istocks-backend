@@ -8,6 +8,7 @@ import com.example.istocks.repository.HoldingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
@@ -28,7 +29,12 @@ public class HoldingsService {
         return holdings.stream()
             .filter(h -> h.getTotalQuantity() > 0) //TODO : Logic for deleting holding if shares become 0
             .map(holding -> {
-                StockDto quote = nseService.getQuote(holding.getSymbol());
+                StockDto quote = null;
+                try {
+                    quote = nseService.getQuote(holding.getSymbol());
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
                 return HoldingDto.from(holding, quote);
             })
             .collect(Collectors.toList());

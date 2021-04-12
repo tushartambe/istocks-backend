@@ -8,8 +8,13 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Map;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Service
 public class NseService {
@@ -44,10 +49,12 @@ public class NseService {
         return restTemplate.getForObject(url, JsonNode.class);
     }
 
-    public StockDto getQuote(String companySymbol) {
+    public StockDto getQuote(String companySymbol) throws UnsupportedEncodingException {
         String url = "http://localhost:3000/nse/get_quote_info?companyName=" + companySymbol;
         Map quote = restTemplate.getForObject(url, Map.class);
         Map<String, Object> data = (Map<String, Object>) ((ArrayList<Object>) quote.get("data")).get(0);
+        String decode = URLDecoder.decode(companySymbol, UTF_8.name());
+        data.put("symbol", decode);
         return StockDto.from(data);
     }
 
