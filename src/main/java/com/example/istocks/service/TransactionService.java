@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class TransactionService {
+    private static final int INITIAL_AMOUNT = 50000;
 
     @Autowired
     private TransactionsRepository transactionsRepository;
@@ -56,7 +57,7 @@ public class TransactionService {
         Wallet wallet = walletService.createWalletForUser(email);
         Transaction initialTransaction = Transaction.builder()
             .email(email)
-            .amount(BigDecimal.valueOf(20000))
+            .amount(BigDecimal.valueOf(INITIAL_AMOUNT))
             .transactionType(TransactionType.CREDIT)
             .description("Initial amount Credited.")
             .date(new Date())
