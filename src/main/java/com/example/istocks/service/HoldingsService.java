@@ -2,9 +2,11 @@ package com.example.istocks.service;
 
 import com.example.istocks.dto.HoldingDto;
 import com.example.istocks.dto.StockDto;
+import com.example.istocks.exception.StockNotOwnedException;
 import com.example.istocks.model.Holding;
 import com.example.istocks.model.Order;
 import com.example.istocks.repository.HoldingRepository;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static com.example.istocks.constants.ExceptionMessages.STOCK_NOT_OWNED;
 import static com.example.istocks.constants.OrderType.BUY;
 
 @Service
@@ -40,6 +43,11 @@ public class HoldingsService {
             .collect(Collectors.toList());
     }
 
+    public HoldingDto getHoldingFor(String email, String symbol) throws StockNotOwnedException, UnsupportedEncodingException {
+        Holding holding = getHolding(email, symbol);
+        return getHoldingDto(holding);
+    }
+
     public Holding updateHoldings(String email, Order order) {
         if (order.getOrderType().equals(BUY)) {
             return updateHoldingsForBuyOrder(email, order);
@@ -50,6 +58,15 @@ public class HoldingsService {
 
     public Holding getHolding(String email, String symbol) {
         return holdingsRepository.findByEmailAndSymbol(email, symbol);
+    }
+
+    private HoldingDto getHoldingDto(Holding holding) throws StockNotOwnedException, UnsupportedEncodingException {
+        if (holding.getTotalQuantity() < 0) {
+            throw new StockNotOwnedException(STOCK_NOT_OWNED);
+        }
+
+        StockDto quote = nseService.getQuote(holding.getSymbol());
+        return HoldingDto.from(holding, quote);
     }
 
     private Holding updateHoldingsForBuyOrder(String email, Order order) {
